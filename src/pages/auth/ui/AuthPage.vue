@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>Auth</div>
+  <p>Auth Автор</p>
 </template>
 
 <style scoped></style>
