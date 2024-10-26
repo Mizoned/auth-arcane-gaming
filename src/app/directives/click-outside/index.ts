@@ -5,10 +5,8 @@ interface ClickOutsideHTMLElement extends HTMLElement {
 }
 
 export const clickOutside = {
-  name: 'click-outside',
   mounted(el: HTMLElement, { value }: DirectiveBinding) {
     const element = el as ClickOutsideHTMLElement;
-    console.log(element, value);
 
     element.clickOutside = (event: Event) => {
       if (!(element === event.target || element.contains(event.target as Node))) {

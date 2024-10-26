@@ -30,6 +30,7 @@
     background-color: var(--ag-white-color);
     padding: 0.188rem;
     font-size: var(--ag-font-size-s);
+    line-height: 1;
   }
 }
 </style>
