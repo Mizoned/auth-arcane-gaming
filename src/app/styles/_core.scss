@@ -2,14 +2,25 @@ html {
   font-size: 16px;
   font-family: var(--ag-font-family-roboto);
   font-weight: normal;
+  color: var(--ag-black-color);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 #app {
+  display: flex;
   max-width: 1440px;
   margin: 0 auto;
   padding: 1rem;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
 }

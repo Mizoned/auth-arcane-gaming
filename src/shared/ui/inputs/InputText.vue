@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface InputTextProps {
-  fluid?: boolean
+  fluid?: boolean;
 }
 
 const modelValue = defineModel<string>();
@@ -17,7 +17,7 @@ defineProps<InputTextProps>();
     ]"
     v-model="modelValue"
     type="text"
-  >
+  />
 </template>
 
 <style lang="scss">

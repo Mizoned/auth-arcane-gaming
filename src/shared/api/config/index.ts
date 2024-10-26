@@ -13,7 +13,7 @@ const API = axios.create({
 
 const allowedLanguages = ['ru', 'en'];
 
-API.interceptors.request.use((config) => {
+API.interceptors.request.use(config => {
   let language = localStorage.getItem('language') || allowedLanguages[0];
 
   if (!allowedLanguages.includes(language)) {
