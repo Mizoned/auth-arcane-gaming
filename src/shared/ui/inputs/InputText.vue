@@ -14,7 +14,7 @@ defineProps<InputTextProps>();
     :class="[
       'input-text',
       { 'is-filled': modelValue?.length },
-      { 'is-fluid': fluid },
+      { 'input-text--fluid': fluid },
       { 'is-invalid': invalid }
     ]"
     v-model="modelValue"
@@ -30,12 +30,12 @@ defineProps<InputTextProps>();
   border-radius: var(--ag-border-radius);
   outline: none;
 
-  &.is-fluid {
-    width: 100%;
-  }
-
   &.is-invalid {
     border-color: var(--ag-red-color);
   }
+}
+
+.input-text.input-text--fluid {
+  width: 100%;
 }
 </style>

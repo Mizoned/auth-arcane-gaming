@@ -24,7 +24,8 @@
   }
 
   &:has(input:focus) label,
-  &:has(input.is-filled) label {
+  &:has(input.is-filled) label,
+  &:has(.is-open) label {
     top: 0;
     background-color: var(--ag-white-color);
     padding: 0.188rem;
