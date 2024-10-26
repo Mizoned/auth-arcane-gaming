@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import AGButton from '@/shared/ui/buttons/AGButton.vue';
-import IconArrow from '@/shared/ui/icons/IconArrow.vue';
 import InputText from '@/shared/ui/inputs/InputText.vue';
 import FloatLabel from '@/shared/ui/labels/FloatLabel.vue';
 import AGSelect from '@/shared/ui/selects/AGSelect.vue';
-import AGFlag from '@/shared/ui/flag/AGFlag.vue';
 import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
-import AGSelectDropdown from '@/shared/ui/selects/AGSelectDropdown.vue';
-import AGSelectSearch from '@/shared/ui/selects/AGSelectSearch.vue';
-import InputSearch from '@/shared/ui/inputs/InputSearch.vue';
-import { ref } from 'vue';
-import ChangeLanguage from '@/features/language/change/ChangeLanguage.vue';
+import { ChangeLanguage } from '@/features/change-language';
+import { onMounted, ref } from 'vue';
+import { getCountries } from '@/entities/country/api';
+import type { Country } from '@/entities/country/types';
+import CountryFlag from '@/entities/country/ui/flag/CountryFlag.vue';
+const countries = ref<Country[]>([]);
 
-const search = ref<string>('');
+onMounted(async () => {
+  countries.value = await getCountries();
+});
 </script>
 
 <template>
@@ -28,17 +29,17 @@ const search = ref<string>('');
       <div class="auth-form__body">
         <div class="auth-form__fields">
           <FloatLabel>
-            <AGSelect fluid>
-              <template #search>
-                <AGSelectSearch>
-                  <InputSearch v-model="search" placeholder="Поиск" fluid />
-                </AGSelectSearch>
+            <AGSelect :options="countries" fluid useSearch>
+              <template #option="slotProps">
+                <AGSelectItem
+                  :name="slotProps.data.name"
+                  :desc="slotProps.data.dial_code"
+                >
+                  <template #icon>
+                    <CountryFlag :flag="slotProps.data.code" />
+                  </template>
+                </AGSelectItem>
               </template>
-              <AGSelectItem name="Россия" desc="+7">
-                <template #icon>
-                  <AGFlag flag="ru" />
-                </template>
-              </AGSelectItem>
             </AGSelect>
             <label for="country">Страна</label>
           </FloatLabel>

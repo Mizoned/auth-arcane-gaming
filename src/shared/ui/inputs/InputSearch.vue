@@ -17,14 +17,11 @@ const emit = defineEmits<{
 
 const clearHandler = () => {
   emit('update:modelValue', '');
-}
+};
 </script>
 
 <template>
-  <div :class="[
-    'input-search',
-    { 'input-search--fluid': fluid }
-  ]">
+  <div :class="['input-search', { 'input-search--fluid': fluid }]">
     <div class="input-search__icon input-search__search">
       <IconMagnifyingGlass />
     </div>
@@ -33,7 +30,7 @@ const clearHandler = () => {
       :placeholder="placeholder"
       class="input-search__input"
       type="text"
-    >
+    />
     <div
       v-if="modelValue?.length"
       class="input-search__icon input-search__clear"

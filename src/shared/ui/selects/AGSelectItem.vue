@@ -8,13 +8,13 @@ defineProps<AGSelectItemProps>();
 </script>
 
 <template>
-<div class="ag-select-item">
-  <div v-if="$slots['icon']" class="ag-select-item__icon">
-    <slot name="icon" />
+  <div class="ag-select-item">
+    <div v-if="$slots['icon']" class="ag-select-item__icon">
+      <slot name="icon" />
+    </div>
+    <div class="ag-select-item__name">{{ name }}</div>
+    <div v-if="desc" class="ag-select-item__desc">{{ desc }}</div>
   </div>
-  <div class="ag-select-item__name">{{ name }}</div>
-  <div v-if="desc" class="ag-select-item__desc">{{ desc }}</div>
-</div>
 </template>
 
 <style scoped lang="scss">

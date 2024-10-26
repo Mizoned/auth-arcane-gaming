@@ -9,14 +9,16 @@ export const clickOutside = {
     const element = el as ClickOutsideHTMLElement;
 
     element.clickOutside = (event: Event) => {
-      if (!(element === event.target || element.contains(event.target as Node))) {
+      if (
+        !(element === event.target || element.contains(event.target as Node))
+      ) {
         value(event);
       }
-    }
+    };
 
     document.body.addEventListener('click', element.clickOutside, true);
   },
   unmounted(element: ClickOutsideHTMLElement) {
     document.body.removeEventListener('click', element.clickOutside, true);
   }
-}
+};

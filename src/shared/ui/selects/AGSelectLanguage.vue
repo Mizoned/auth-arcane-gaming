@@ -13,15 +13,8 @@ defineProps<AGSelectLanguageProps>();
 
 <template>
   <div class="ag-select-language">
-    <select
-      name="language"
-      v-model="modelValue"
-    >
-      <option
-        v-for="{ value, name } in options"
-        :key="value"
-        :value="value"
-      >
+    <select name="language" v-model="modelValue">
+      <option v-for="{ value, name } in options" :key="value" :value="value">
         {{ name }}
       </option>
     </select>
