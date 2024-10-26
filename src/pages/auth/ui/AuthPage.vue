@@ -29,43 +29,16 @@ const search = ref<string>('');
         <div class="auth-form__fields">
           <FloatLabel>
             <AGSelect fluid>
-              <AGSelectDropdown>
-                <template #search>
-                  <AGSelectSearch>
-                    <InputSearch v-model="search" placeholder="Поиск" fluid />
-                  </AGSelectSearch>
+              <template #search>
+                <AGSelectSearch>
+                  <InputSearch v-model="search" placeholder="Поиск" fluid />
+                </AGSelectSearch>
+              </template>
+              <AGSelectItem name="Россия" desc="+7">
+                <template #icon>
+                  <AGFlag flag="ru" />
                 </template>
-                <AGSelectItem name="Россия" desc="+7">
-                  <template #icon>
-                    <AGFlag flag="ru" />
-                  </template>
-                </AGSelectItem>
-                <AGSelectItem name="Россия" desc="+7">
-                  <template #icon>
-                    <AGFlag flag="ru" />
-                  </template>
-                </AGSelectItem>
-                <AGSelectItem name="Россия" desc="+7">
-                  <template #icon>
-                    <AGFlag flag="ru" />
-                  </template>
-                </AGSelectItem>
-                <AGSelectItem name="Россия" desc="+7">
-                  <template #icon>
-                    <AGFlag flag="ru" />
-                  </template>
-                </AGSelectItem>
-                <AGSelectItem name="Россия" desc="+7">
-                  <template #icon>
-                    <AGFlag flag="ru" />
-                  </template>
-                </AGSelectItem>
-                <AGSelectItem name="Россия" desc="+7">
-                  <template #icon>
-                    <AGFlag flag="ru" />
-                  </template>
-                </AGSelectItem>
-              </AGSelectDropdown>
+              </AGSelectItem>
             </AGSelect>
             <label for="country">Страна</label>
           </FloatLabel>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import AGSelectDropdown from '@/shared/ui/selects/AGSelectDropdown.vue';
+import IconChevron from '@/shared/ui/icons/IconChevron.vue';
 
 interface AGSelectProps {
   fluid?: boolean
@@ -18,27 +20,18 @@ const isOpen = ref<boolean>(false);
       { 'is-open': isOpen }
     ]"
     @click="() => isOpen = true"
-    ref="select"
     v-click-outside="() => isOpen = false"
   >
     <span class="ag-select__label"></span>
     <div class="ag-select__icon">
-      <svg
-        width="24"
-        height="25"
-        viewBox="0 0 24 25"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M21.5739 9.62504L12.9374 17.1128C12.6761 17.3849 12.3352 17.5 11.9999 17.5C11.6647 17.5 11.3249 17.3855 11.0624 17.1566L2.42596 9.66889C1.87908 9.19142 1.85607 8.39686 2.37269 7.89349C2.89117 7.38656 3.75794 7.36866 4.30112 7.84443L12.0001 14.563L19.699 7.84443C20.2423 7.36858 21.1053 7.38659 21.6274 7.89349C22.1438 8.3483 22.1211 9.14364 21.5739 9.62504Z"
-          fill="var( --ag-light-grey-color)"
-        />
-      </svg>
+      <IconChevron />
     </div>
-    <div class="ag-select__dropdown">
+    <AGSelectDropdown class="ag-select__dropdown">
+      <template v-if="$slots['search']" #search>
+        <slot name="search" />
+      </template>
       <slot />
-    </div>
+    </AGSelectDropdown>
   </div>
 </template>
 
@@ -67,6 +60,7 @@ const isOpen = ref<boolean>(false);
     flex-shrink: 0;
     width: 1.5rem;
     height: 1.5rem;
+    color: var(--ag-light-grey-color);
 
     svg {
       width: 100%;
