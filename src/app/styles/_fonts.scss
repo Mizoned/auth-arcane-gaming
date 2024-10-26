@@ -3,7 +3,10 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../../../public/fonts/sf-pro-display-regular.woff2') format('woff2')
+  src:
+          local('SF Pro Display'),
+          url('/fonts/sf-pro-display-regular.woff2') format('woff2'),
+          url('/fonts/sf-pro-display-regular.woff') format('woff')
 }
 
 @font-face {
@@ -11,5 +14,30 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../../../public/fonts/sf-pro-display-bold.woff2') format('woff2')
+  src:
+          local('SF Pro Display'),
+          url('/fonts/sf-pro-display-bold.woff2') format('woff2'),
+          url('/fonts/sf-pro-display-bold.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+          local('Roboto'),
+          url('/fonts/roboto-regular.woff2') format('woff2'),
+          url('/fonts/roboto-regular.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src:
+          local('Roboto'),
+          url('/fonts/roboto-medium.woff2') format('woff2'),
+          url('/fonts/roboto-medium.woff') format('woff')
 }
