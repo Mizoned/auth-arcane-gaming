@@ -19,6 +19,10 @@
     transition: all ease 0.2s;
   }
 
+  &:has(input.is-invalid) label {
+    color: var(--ag-red-color);
+  }
+
   &:has(input:focus) label,
   &:has(input.is-filled) label {
     top: 0;
