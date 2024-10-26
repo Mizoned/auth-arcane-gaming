@@ -19,7 +19,7 @@
     transition: all ease 0.2s;
   }
 
-  &:has(input.is-invalid) label {
+  &:has(.is-invalid) label {
     color: var(--ag-red-color);
   }
 

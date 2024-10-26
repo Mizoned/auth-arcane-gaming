@@ -14,6 +14,7 @@ interface AGSelectProps {
   options: AGSelectOption<T>[];
   fluid?: boolean;
   useSearch?: boolean;
+  invalid?: boolean;
 }
 
 const props = defineProps<AGSelectProps>();
@@ -62,6 +63,7 @@ const selectedOptionName = computed<string>(() => {
       { 'is-open': isOpen },
       { 'use-search': useSearch },
       { 'is-selected': selectedOptionName.length },
+      { 'is-invalid': invalid },
     ]"
     v-click-outside="() => (isOpen = false)"
   >
@@ -189,6 +191,10 @@ const selectedOptionName = computed<string>(() => {
     #{$root}__dropdown-list {
       padding-top: 0;
     }
+  }
+
+  &.is-invalid {
+    border-color: var(--ag-red-color);
   }
 }
 </style>
