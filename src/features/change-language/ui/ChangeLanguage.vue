@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AGSelectLanguage from '@/shared/ui/selects/AGSelectLanguage.vue';
 import { ref } from 'vue';
+import AGSelectLanguage from '@/shared/ui/selects/AGSelectLanguage.vue';
 
 const languages = ref([
   { name: 'Русский', value: 'ru' },

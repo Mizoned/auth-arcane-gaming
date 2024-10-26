@@ -4,16 +4,19 @@ import InputText from '@/shared/ui/inputs/InputText.vue';
 import FloatLabel from '@/shared/ui/labels/FloatLabel.vue';
 import AGSelect from '@/shared/ui/selects/AGSelect.vue';
 import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
-import { ChangeLanguage } from '@/features/change-language';
-import { onMounted, ref } from 'vue';
-import { getCountries } from '@/entities/country/api';
-import type { Country } from '@/entities/country/types';
 import CountryFlag from '@/entities/country/ui/flag/CountryFlag.vue';
-const countries = ref<Country[]>([]);
+import { ChangeLanguage } from '@/features/change-language';
+import useCountryStore from '@/entities/country/store';
+import { onMounted, ref } from 'vue';
+import type { Country } from '@/entities/country/types';
 
-onMounted(async () => {
-  countries.value = await getCountries();
+const countriesStore = useCountryStore();
+
+onMounted(() => {
+  countriesStore.getCountries();
 });
+
+const selectedCountry = ref<Country | null>(null);
 </script>
 
 <template>
@@ -29,7 +32,12 @@ onMounted(async () => {
       <div class="auth-form__body">
         <div class="auth-form__fields">
           <FloatLabel>
-            <AGSelect :options="countries" fluid useSearch>
+            <AGSelect
+              v-model="selectedCountry"
+              :options="countriesStore.countries"
+              fluid
+              useSearch
+            >
               <template #option="slotProps">
                 <AGSelectItem
                   :name="slotProps.data.name"

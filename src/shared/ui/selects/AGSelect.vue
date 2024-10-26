@@ -10,12 +10,17 @@ type AGSelectOptionBase = {
 type AGSelectOption<T> = T & AGSelectOptionBase;
 
 interface AGSelectProps {
+  modelValue: AGSelectOption<T> | null;
   options: AGSelectOption<T>[];
   fluid?: boolean;
   useSearch?: boolean;
 }
 
 const props = defineProps<AGSelectProps>();
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: AGSelectOption<T>): void;
+}>();
 
 const isOpen = ref<boolean>(false);
 const search = ref<string>('');
@@ -30,6 +35,23 @@ const searchedOptions = computed<AGSelectOption<T>[]>(() => {
     option.name.toLowerCase().includes(query)
   );
 });
+
+const toggleHandler = () => {
+  isOpen.value = !isOpen.value;
+  search.value = '';
+}
+
+const selectHandler = (option: AGSelectOption<T>) => {
+  selectedOption.value = option;
+  emit('update:modelValue', option);
+  toggleHandler();
+}
+
+const selectedOption = ref<AGSelectOption<T> | null>(props.modelValue);
+
+const selectedOptionName = computed<string>(() => {
+  return selectedOption.value !== null ? selectedOption.value.name : '';
+});
 </script>
 
 <template>
@@ -38,14 +60,16 @@ const searchedOptions = computed<AGSelectOption<T>[]>(() => {
       'ag-select',
       { 'is-fluid': fluid },
       { 'is-open': isOpen },
-      { 'use-search': useSearch }
+      { 'use-search': useSearch },
+      { 'is-selected': selectedOptionName.length },
     ]"
-    @click="() => (isOpen = true)"
     v-click-outside="() => (isOpen = false)"
   >
-    <span class="ag-select__label"></span>
-    <div class="ag-select__icon">
-      <IconChevron />
+    <div class="ag-select__input" @click="toggleHandler">
+      <span class="ag-select__label">{{ selectedOptionName }}</span>
+      <div class="ag-select__icon">
+        <IconChevron />
+      </div>
     </div>
     <div class="ag-select__dropdown">
       <div v-if="useSearch" class="ag-select__search">
@@ -53,9 +77,17 @@ const searchedOptions = computed<AGSelectOption<T>[]>(() => {
       </div>
       <div class="ag-select__dropdown-list">
         <template v-if="searchedOptions.length">
-          <template v-for="option in searchedOptions" :key="option.name">
+          <div
+            :class="[
+              'ag-select__dropdown-list-item',
+              { 'is-selected': option.name === selectedOptionName },
+            ]"
+            @click="selectHandler(option)"
+            v-for="option in searchedOptions"
+            :key="option.name"
+          >
             <slot name="option" :data="option" />
-          </template>
+          </div>
         </template>
         <div v-else class="ag-select__dropdown-list-empty">
           Ничего не найдено
@@ -71,16 +103,23 @@ const searchedOptions = computed<AGSelectOption<T>[]>(() => {
   display: inline-flex;
   position: relative;
   user-select: none;
-  padding: calc(1rem - 1px);
   border: 1px solid var(--ag-champagne-color);
   line-height: 1.5rem;
   row-gap: 0.5rem;
   border-radius: var(--ag-border-radius);
 
+  &__input {
+    display: flex;
+    width: 100%;
+    padding: calc(1rem - 1px);
+  }
+
   &__label {
-    display: block;
+    display: inline-block;
+    padding-right: 1rem;
+    width: 100%;
     white-space: nowrap;
-    flex: 1 1 auto;
+    text-overflow: ellipsis;
   }
 
   &__icon {
@@ -121,6 +160,12 @@ const searchedOptions = computed<AGSelectOption<T>[]>(() => {
     overflow-y: auto;
     padding: 0.5rem 0;
     height: 100%;
+  }
+
+  &__dropdown-list-item {
+    &.is-selected {
+      background-color: var(--ag-snow-white-color);
+    }
   }
 
   &__dropdown-list-empty {
