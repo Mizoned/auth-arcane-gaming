@@ -12,8 +12,6 @@ import InputSearch from '@/shared/ui/inputs/InputSearch.vue';
 import { ref } from 'vue';
 import ChangeLanguage from '@/features/language/change/ChangeLanguage.vue';
 
-const obj = { name: 'Afghanistan', flag: '🇦🇫', code: 'AF', dial_code: '+93' };
-
 const search = ref<string>('');
 </script>
 
@@ -31,10 +29,37 @@ const search = ref<string>('');
         <div class="auth-form__fields">
           <FloatLabel>
             <AGSelect fluid>
-              <AGSelectDropdown style="padding-bottom: 0.5rem">
-                <AGSelectSearch>
-                  <InputSearch v-model="search" placeholder="Поиск" fluid />
-                </AGSelectSearch>
+              <AGSelectDropdown>
+                <template #search>
+                  <AGSelectSearch>
+                    <InputSearch v-model="search" placeholder="Поиск" fluid />
+                  </AGSelectSearch>
+                </template>
+                <AGSelectItem name="Россия" desc="+7">
+                  <template #icon>
+                    <AGFlag flag="ru" />
+                  </template>
+                </AGSelectItem>
+                <AGSelectItem name="Россия" desc="+7">
+                  <template #icon>
+                    <AGFlag flag="ru" />
+                  </template>
+                </AGSelectItem>
+                <AGSelectItem name="Россия" desc="+7">
+                  <template #icon>
+                    <AGFlag flag="ru" />
+                  </template>
+                </AGSelectItem>
+                <AGSelectItem name="Россия" desc="+7">
+                  <template #icon>
+                    <AGFlag flag="ru" />
+                  </template>
+                </AGSelectItem>
+                <AGSelectItem name="Россия" desc="+7">
+                  <template #icon>
+                    <AGFlag flag="ru" />
+                  </template>
+                </AGSelectItem>
                 <AGSelectItem name="Россия" desc="+7">
                   <template #icon>
                     <AGFlag flag="ru" />

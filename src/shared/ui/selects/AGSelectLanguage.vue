@@ -44,16 +44,10 @@ defineProps<AGSelectLanguageProps>();
     -webkit-appearance: none;
     -moz-appearance: none;
     padding-right: 1rem;
-  }
-
-  &:after {
-    content: '▼';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--ag-light-grey-color);
+    background-position: right -4px top -6px;
+    background-size: 1.5rem;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6.98438 9.98438H17.0156L12 15L6.98438 9.98438Z' fill='%239E9E9E'/%3E%3C/svg%3E%0A");
   }
 }
 </style>

@@ -2,19 +2,12 @@
 import { ref } from 'vue';
 
 interface AGSelectProps {
-  // options: [];
-  // optionLabel: string;
   fluid?: boolean
 }
 
 defineProps<AGSelectProps>();
 
 const isOpen = ref<boolean>(false);
-
-const toggleHandler = (value: boolean) => {
-  console.log('test', value);
-  isOpen.value = value;
-}
 </script>
 
 <template>
@@ -24,7 +17,9 @@ const toggleHandler = (value: boolean) => {
       { 'is-fluid': fluid },
       { 'is-open': isOpen }
     ]"
-    @click="toggleHandler(true)"
+    @click="() => isOpen = true"
+    ref="select"
+    v-click-outside="() => isOpen = false"
   >
     <span class="ag-select__label"></span>
     <div class="ag-select__icon">

@@ -1,13 +1,14 @@
 import type { DirectiveBinding } from 'vue';
 
-interface ClickOutsideElement extends HTMLElement {
+interface ClickOutsideHTMLElement extends HTMLElement {
   clickOutside: (event: Event) => void;
 }
 
-export default {
+export const clickOutside = {
   name: 'click-outside',
   mounted(el: HTMLElement, { value }: DirectiveBinding) {
-    const element = el as ClickOutsideElement;
+    const element = el as ClickOutsideHTMLElement;
+    console.log(element, value);
 
     element.clickOutside = (event: Event) => {
       if (!(element === event.target || element.contains(event.target as Node))) {
@@ -17,7 +18,7 @@ export default {
 
     document.body.addEventListener('click', element.clickOutside, true);
   },
-  unmounted(element: ClickOutsideElement) {
+  unmounted(element: ClickOutsideHTMLElement) {
     document.body.removeEventListener('click', element.clickOutside, true);
   }
-};
+}
