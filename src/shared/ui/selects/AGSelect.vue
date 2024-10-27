@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import IconChevron from '@/shared/ui/icons/IconChevron.vue';
 import InputSearch from '@/shared/ui/inputs/InputSearch.vue';
 
@@ -19,8 +19,9 @@ interface AGSelectProps {
 
 const props = defineProps<AGSelectProps>();
 
-const emit = defineEmits<{
+const emits = defineEmits<{
   (e: 'update:modelValue', value: AGSelectOption<T>): void;
+  (e: 'close'): void;
 }>();
 
 const isOpen = ref<boolean>(false);
@@ -42,9 +43,15 @@ const toggleHandler = () => {
   search.value = '';
 };
 
+watch(isOpen, (newValue: boolean) => {
+  if (!newValue) {
+    emits('close');
+  }
+});
+
 const selectHandler = (option: AGSelectOption<T>) => {
   selectedOption.value = option;
-  emit('update:modelValue', option);
+  emits('update:modelValue', option);
   toggleHandler();
 };
 
