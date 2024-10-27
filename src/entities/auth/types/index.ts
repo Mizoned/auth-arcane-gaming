@@ -16,6 +16,6 @@ export interface SendSessionResponse {
 }
 
 export interface CheckSessionResponse {
-  verify_token: string,
-  is_test: boolean
+  verify_token: string;
+  is_test: boolean;
 }

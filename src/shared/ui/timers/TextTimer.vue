@@ -15,7 +15,7 @@ const timerInterval = ref<number | null>(null);
 
 const updateSecondsHandler = () => {
   emits('update:seconds', timeLeft.value);
-}
+};
 
 const startTimer = () => {
   if (timerInterval.value) return;
@@ -28,7 +28,7 @@ const startTimer = () => {
       stopTimer();
     }
   }, 1000);
-}
+};
 
 const stopTimer = () => {
   if (timerInterval.value) {
@@ -37,7 +37,7 @@ const stopTimer = () => {
     timeLeft.value = 0;
     updateSecondsHandler();
   }
-}
+};
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -47,7 +47,7 @@ const formatTime = (seconds: number): string => {
   const secondsStr = remainingSeconds.toString().padStart(2, '0');
 
   return `${minutesStr}:${secondsStr}`;
-}
+};
 
 const formattedTime = computed(() => formatTime(timeLeft.value));
 

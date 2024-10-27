@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import IconLoading from '@/shared/ui/icons/IconLoading.vue';
+
 interface AGButtonProps {
   to?: string;
   label?: string;
   text?: boolean;
   size?: 'sm';
   sizeIcon?: 'sm';
+  loading?: boolean;
 }
 
 const props = withDefaults(defineProps<AGButtonProps>(), {
@@ -26,13 +29,20 @@ const componentTag = isLink ? 'a' : 'button';
       { [`ag-button-icon--${sizeIcon}`]: sizeIcon }
     ]"
   >
-    <span v-if="$slots['beforeIcon']" class="ag-button__icon">
-      <slot name="beforeIcon" />
-    </span>
-    <span v-if="label" class="ag-button__label">{{ label }}</span>
-    <span v-if="$slots['afterIcon']" class="ag-button__icon">
-      <slot name="beforeIcon" />
-    </span>
+    <template v-if="!loading">
+      <span v-if="$slots['beforeIcon']" class="ag-button__icon">
+        <slot name="beforeIcon" />
+      </span>
+      <span v-if="label" class="ag-button__label">{{ label }}</span>
+      <span v-if="$slots['afterIcon']" class="ag-button__icon">
+        <slot name="beforeIcon" />
+      </span>
+    </template>
+    <template v-else>
+      <div class="ag-button__loading">
+        <IconLoading class="ag-button__loading-icon" />
+      </div>
+    </template>
   </component>
 </template>
 
@@ -58,6 +68,10 @@ const componentTag = isLink ? 'a' : 'button';
   &__icon {
     display: inline-flex;
     flex-shrink: 0;
+  }
+
+  &__loading-icon {
+    animation: spin 2s linear infinite;
   }
 }
 

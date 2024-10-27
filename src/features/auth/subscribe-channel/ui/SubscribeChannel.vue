@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 
 const checkStatus = async () => {
   await authStore.checkSubscribeStatus();
-}
+};
 </script>
 
 <template>
@@ -37,8 +37,17 @@ const checkStatus = async () => {
   </div>
   <div class="auth-form__body">
     <div class="auth-form__actions">
-      <AGButton label="Авторизоваться в боте" :to="authStore.selectedChannel?.link" target="_blank" />
-      <AGButton label="Проверить статус" text @click="checkStatus" />
+      <AGButton
+        label="Авторизоваться в боте"
+        :to="authStore.selectedChannel?.link"
+        target="_blank"
+      />
+      <AGButton
+        label="Проверить статус"
+        text
+        @click="checkStatus"
+        :loading="authStore.isCheckSubscribeStatusLoading"
+      />
     </div>
   </div>
 </template>

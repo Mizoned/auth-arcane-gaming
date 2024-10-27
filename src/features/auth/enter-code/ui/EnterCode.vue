@@ -16,12 +16,8 @@ const authStore = useAuthStore();
 const channelsStore = useChannelsStore();
 
 const resendCode = async () => {
-  if (authStore.sessionExpiredAt && authStore.sessionExpiredAt <= new Date()) {
-    await authStore.createSessionToReceiveCode();
-  } else {
-    await authStore.resendCode();
-  }
-}
+  await authStore.resendCode();
+};
 
 const rules = computed(() => ({
   channel: {
@@ -43,14 +39,15 @@ const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
   await authStore.checkSessionCode();
-}
+};
 </script>
 
 <template>
   <div class="auth-form__header">
     <div class="auth-form__title">Введите код</div>
     <div class="auth-form__description">
-      Отправлен по номеру <span v-if="authStore.mobilePhone">{{ authStore.mobilePhone }}</span>
+      Отправлен по номеру
+      <span v-if="authStore.mobilePhone">{{ authStore.mobilePhone }}</span>
     </div>
   </div>
   <div class="auth-form__body">
@@ -87,7 +84,7 @@ const submitHandler = async () => {
             v-model="authStore.code"
             :timer="authStore.timer"
             @start-timer="resendCode"
-            @update:timer="(value) => authStore.timer = value"
+            @update:timer="value => (authStore.timer = value)"
             @blur="$v.code.$touch()"
             :invalid="$v.code.$invalid && $v.code.$error"
             id="code"
@@ -107,7 +104,11 @@ const submitHandler = async () => {
           <IconArrow />
         </template>
       </AGButton>
-      <AGButton label="Продолжить" @click="submitHandler" />
+      <AGButton
+        label="Продолжить"
+        @click="submitHandler"
+        :loading="authStore.isCheckSessionCodeLoading"
+      />
     </div>
   </div>
 </template>

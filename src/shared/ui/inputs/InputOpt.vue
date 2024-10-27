@@ -11,16 +11,16 @@ defineProps<InputOptProps>();
 
 const emits = defineEmits<{
   (e: 'update:timer', value: number): void;
-  (e: 'startTimer'): void
+  (e: 'startTimer'): void;
 }>();
 
 const startTimerHandler = () => {
   emits('startTimer');
-}
+};
 
 const updateTimerHandler = (value: number) => {
   emits('update:timer', value);
-}
+};
 </script>
 
 <template>
@@ -34,11 +34,7 @@ const updateTimerHandler = (value: number) => {
         size="sm"
         text
       />
-      <TextTimer
-        v-else
-        :seconds="timer"
-        @update:seconds="updateTimerHandler"
-      />
+      <TextTimer v-else :seconds="timer" @update:seconds="updateTimerHandler" />
     </div>
   </div>
 </template>

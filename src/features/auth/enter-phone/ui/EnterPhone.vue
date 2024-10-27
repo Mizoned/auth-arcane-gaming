@@ -37,7 +37,7 @@ const submitHandler = async () => {
   await authStore.createSessionToReceiveCode().then(() => {
     authStore.nextStep();
   });
-}
+};
 </script>
 
 <template>
@@ -92,7 +92,11 @@ const submitHandler = async () => {
       </div>
     </div>
     <div class="auth-form__actions">
-      <AGButton label="Продолжить" @click="submitHandler" />
+      <AGButton
+        label="Продолжить"
+        @click="submitHandler"
+        :loading="authStore.isCreateSessionLoading"
+      />
     </div>
   </div>
 </template>
