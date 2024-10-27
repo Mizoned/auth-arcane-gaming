@@ -1,18 +1,24 @@
 <script setup lang="ts">
 interface AGButtonProps {
+  to?: string;
   label?: string;
   text?: boolean;
   size?: 'sm';
   sizeIcon?: 'sm';
 }
 
-withDefaults(defineProps<AGButtonProps>(), {
+const props = withDefaults(defineProps<AGButtonProps>(), {
   text: false
 });
+
+const isLink = !!props.to;
+const componentTag = isLink ? 'a' : 'button';
 </script>
 
 <template>
-  <button
+  <component
+    :is="componentTag"
+    :href="to"
     :class="[
       'ag-button',
       { 'ag-button--text': text },
@@ -27,7 +33,7 @@ withDefaults(defineProps<AGButtonProps>(), {
     <span v-if="$slots['afterIcon']" class="ag-button__icon">
       <slot name="beforeIcon" />
     </span>
-  </button>
+  </component>
 </template>
 
 <style scoped lang="scss">
