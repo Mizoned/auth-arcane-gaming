@@ -1,65 +1,34 @@
 <script setup lang="ts">
-import AGButton from '@/shared/ui/buttons/AGButton.vue';
-import InputText from '@/shared/ui/inputs/InputText.vue';
-import FloatLabel from '@/shared/ui/labels/FloatLabel.vue';
-import AGSelect from '@/shared/ui/selects/AGSelect.vue';
-import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
-import CountryFlag from '@/entities/country/ui/flag/CountryFlag.vue';
+import { computed, onMounted } from 'vue';
 import { ChangeLanguage } from '@/features/change-language';
-import useCountryStore from '@/entities/country/store';
-import { onMounted, ref } from 'vue';
-import type { Country } from '@/entities/country/types';
+import { useCountriesStore } from '@/entities/countries';
+import { EnterPhone, SubscribeChannel, EnterCode } from '@/features/auth';
+import { useAuthStore } from '@/entities/auth';
 
-const countriesStore = useCountryStore();
+const countriesStore = useCountriesStore();
+const authStore = useAuthStore();
 
 onMounted(() => {
   countriesStore.getCountries();
 });
 
-const selectedCountry = ref<Country | null>(null);
+const isPhoneOrCodeSteps = computed<boolean>(
+  () =>
+    authStore.currentStepName === 'phone' ||
+    authStore.currentStepName === 'code'
+);
 </script>
 
 <template>
-  <div class="auth-page">
-    <div class="auth-form">
-      <div class="auth-form__logo">Логотип (Высота 40px, длина до 300px)</div>
-      <div class="auth-form__header">
-        <div class="auth-form__title">Введите номер телефона</div>
-        <div class="auth-form__description">
-          Чтобы войти или зарегистрироваться
-        </div>
+  <div :class="['auth-page']">
+    <div :class="['auth-form', `auth-form--${authStore.currentStepName}`]">
+      <div v-if="isPhoneOrCodeSteps" class="auth-form__logo">
+        Логотип (Высота 40px, длина до 300px)
       </div>
-      <div class="auth-form__body">
-        <div class="auth-form__fields">
-          <FloatLabel>
-            <AGSelect
-              v-model="selectedCountry"
-              :options="countriesStore.countries"
-              fluid
-              useSearch
-            >
-              <template #option="slotProps">
-                <AGSelectItem
-                  :name="slotProps.data.name"
-                  :desc="slotProps.data.dial_code"
-                >
-                  <template #icon>
-                    <CountryFlag :flag="slotProps.data.code" />
-                  </template>
-                </AGSelectItem>
-              </template>
-            </AGSelect>
-            <label for="country">Страна</label>
-          </FloatLabel>
-          <FloatLabel>
-            <InputText id="phone" name="phone" fluid />
-            <label for="phone">Номер телефона</label>
-          </FloatLabel>
-        </div>
-        <AGButton label="Продолжить" />
-      </div>
-
-      <div class="auth-form__footer">
+      <EnterPhone v-if="authStore.currentStepName === 'phone'" />
+      <EnterCode v-if="authStore.currentStepName === 'code'" />
+      <SubscribeChannel v-if="authStore.currentStepName === 'channel'" />
+      <div v-if="isPhoneOrCodeSteps" class="auth-form__footer">
         <div class="auth-form__language">
           <ChangeLanguage />
         </div>
@@ -68,16 +37,11 @@ const selectedCountry = ref<Country | null>(null);
           <a href="#" target="_blank">Конфиденциальность</a>
         </div>
       </div>
-      <!--      <AGButton label="Назад" text before-icon-component-name="IconArrow" size="sm" size-icon="sm">-->
-      <!--        <template #beforeIcon>-->
-      <!--          <IconArrow />-->
-      <!--        </template>-->
-      <!--      </AGButton>-->
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .auth-page {
   display: flex;
   justify-content: center;
@@ -86,6 +50,8 @@ const selectedCountry = ref<Country | null>(null);
 }
 
 .auth-form {
+  $root: #{&};
+  position: relative;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--ag-champagne-color);
@@ -116,6 +82,10 @@ const selectedCountry = ref<Country | null>(null);
 
   &__description {
     color: var(--ag-dark-grey-color);
+
+    span {
+      font-weight: var(--ag-font-weight-medium);
+    }
   }
 
   &__fields {
@@ -137,9 +107,6 @@ const selectedCountry = ref<Country | null>(null);
     margin-top: auto;
   }
 
-  &__language {
-  }
-
   &__politics {
     display: flex;
     align-items: center;
@@ -149,6 +116,42 @@ const selectedCountry = ref<Country | null>(null);
       color: var(--ag-dark-grey-color);
       font-size: var(--ag-font-size-s);
       line-height: 1.5rem;
+    }
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  &__back-btn {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+
+  &__channel-icon {
+    img {
+      width: 7.5rem;
+      height: 7.5rem;
+    }
+  }
+
+  &--channel {
+    #{$root}__title {
+      margin: 1.875rem 0;
+    }
+
+    #{$root}__header {
+      margin-bottom: 4.375rem;
+    }
+  }
+
+  &--code {
+    #{$root}__actions {
+      grid-template-columns: 1fr 1fr;
     }
   }
 }

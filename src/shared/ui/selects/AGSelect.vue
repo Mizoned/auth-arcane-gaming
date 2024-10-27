@@ -40,13 +40,13 @@ const searchedOptions = computed<AGSelectOption<T>[]>(() => {
 const toggleHandler = () => {
   isOpen.value = !isOpen.value;
   search.value = '';
-}
+};
 
 const selectHandler = (option: AGSelectOption<T>) => {
   selectedOption.value = option;
   emit('update:modelValue', option);
   toggleHandler();
-}
+};
 
 const selectedOption = ref<AGSelectOption<T> | null>(props.modelValue);
 
@@ -63,7 +63,7 @@ const selectedOptionName = computed<string>(() => {
       { 'is-open': isOpen },
       { 'use-search': useSearch },
       { 'is-selected': selectedOptionName.length },
-      { 'is-invalid': invalid },
+      { 'is-invalid': invalid }
     ]"
     v-click-outside="() => (isOpen = false)"
   >
@@ -82,7 +82,7 @@ const selectedOptionName = computed<string>(() => {
           <div
             :class="[
               'ag-select__dropdown-list-item',
-              { 'is-selected': option.name === selectedOptionName },
+              { 'is-selected': option.name === selectedOptionName }
             ]"
             @click="selectHandler(option)"
             v-for="option in searchedOptions"

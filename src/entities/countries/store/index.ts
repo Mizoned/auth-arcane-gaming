@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import type { Country } from '../types';
 import { getCountriesByFile } from '../api';
 
-const useCountryStore = defineStore('CountryStore', () => {
+export const useCountriesStore = defineStore('CountriesStore', () => {
   const isLoading = ref<boolean>(false);
   const countries = ref<Country[]>([]);
 
@@ -17,7 +17,7 @@ const useCountryStore = defineStore('CountryStore', () => {
     } finally {
       isLoading.value = false;
     }
-  }
+  };
 
   return {
     getCountries,
@@ -25,5 +25,3 @@ const useCountryStore = defineStore('CountryStore', () => {
     countries
   };
 });
-
-export default useCountryStore;

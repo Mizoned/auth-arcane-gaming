@@ -1,15 +1,10 @@
 <script setup lang="ts">
-enum IconColor {
-  blue = 'blue',
-  grey = 'grey'
-}
-
 interface IconArrowProps {
-  color: IconColor;
+  color?: 'blue' | 'grey';
 }
 
 withDefaults(defineProps<IconArrowProps>(), {
-  color: IconColor.blue
+  color: 'blue'
 });
 </script>
 
@@ -40,6 +35,6 @@ withDefaults(defineProps<IconArrowProps>(), {
 }
 
 .icon-arrow.icon-arrow--grey {
-  color: var(v--ag-light-grey-color);
+  color: var(--ag-light-grey-color);
 }
 </style>

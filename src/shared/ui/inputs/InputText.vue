@@ -1,12 +1,19 @@
 <script setup lang="ts">
 interface InputTextProps {
+  modelValue?: string;
   fluid?: boolean;
   invalid?: boolean;
 }
 
-const modelValue = defineModel<string>();
-
 defineProps<InputTextProps>();
+const emits = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+}>();
+
+const inputHandler = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  emits('update:modelValue', target.value as string);
+};
 </script>
 
 <template>
@@ -17,7 +24,8 @@ defineProps<InputTextProps>();
       { 'input-text--fluid': fluid },
       { 'is-invalid': invalid }
     ]"
-    v-model="modelValue"
+    :value="modelValue"
+    @input="inputHandler"
     type="text"
   />
 </template>
