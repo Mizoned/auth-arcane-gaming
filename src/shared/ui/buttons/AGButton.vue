@@ -8,6 +8,7 @@ interface AGButtonProps {
   size?: 'sm';
   sizeIcon?: 'sm';
   loading?: boolean;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<AGButtonProps>(), {
@@ -26,8 +27,11 @@ const componentTag = isLink ? 'a' : 'button';
       'ag-button',
       { 'ag-button--text': text },
       { [`ag-button--${size}`]: size },
+      { [`ag-button--loading`]: loading },
+      { [`ag-button--disabled`]: disabled },
       { [`ag-button-icon--${sizeIcon}`]: sizeIcon }
     ]"
+    :disabled="disabled"
   >
     <template v-if="!loading">
       <span v-if="$slots['beforeIcon']" class="ag-button__icon">
@@ -102,5 +106,14 @@ const componentTag = isLink ? 'a' : 'button';
   .ag-button__label {
     color: var(--ag-blue-color);
   }
+}
+
+.ag-button.ag-button--loading {
+  pointer-events: none;
+}
+
+.ag-button.ag-button--disabled {
+  opacity: 0.8;
+  pointer-events: none;
 }
 </style>

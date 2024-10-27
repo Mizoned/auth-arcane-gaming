@@ -3,6 +3,7 @@ interface InputTextProps {
   modelValue?: string;
   fluid?: boolean;
   invalid?: boolean;
+  disabled?: boolean;
 }
 
 defineProps<InputTextProps>();
@@ -22,6 +23,7 @@ const inputHandler = (event: Event) => {
       'input-text',
       { 'is-filled': modelValue?.length },
       { 'input-text--fluid': fluid },
+      { 'input-text--disabled': disabled },
       { 'is-invalid': invalid }
     ]"
     :value="modelValue"
@@ -45,5 +47,10 @@ const inputHandler = (event: Event) => {
 
 .input-text.input-text--fluid {
   width: 100%;
+}
+
+.input-text.input-text--disabled {
+  background-color: var(--ag-snow-white-color);
+  pointer-events: none;
 }
 </style>

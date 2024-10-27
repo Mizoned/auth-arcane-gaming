@@ -35,6 +35,9 @@ const formData = {
 
 const $v = useVuelidate(rules, formData);
 
+const isChannelError = computed(() => $v.value.channel.$invalid && $v.value.channel.$error);
+const isCodeError = computed(() => $v.value.code.$invalid && $v.value.code.$error);
+
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
@@ -58,7 +61,7 @@ const submitHandler = async () => {
             v-model="authStore.selectedChannel"
             :options="channelsStore.channels"
             @close="$v.channel.$touch()"
-            :invalid="$v.channel.$invalid && $v.channel.$error"
+            :invalid="isChannelError"
             fluid
           >
             <template #option="slotProps">
@@ -74,7 +77,7 @@ const submitHandler = async () => {
           </AGSelect>
           <label for="country">Способ получения кода</label>
         </FloatLabel>
-        <InputTextError v-if="$v.channel.$invalid && $v.channel.$error">
+        <InputTextError v-if="isChannelError">
           {{ $v.channel.$errors[0]?.$message }}
         </InputTextError>
       </div>
@@ -86,14 +89,14 @@ const submitHandler = async () => {
             @start-timer="resendCode"
             @update:timer="value => (authStore.timer = value)"
             @blur="$v.code.$touch()"
-            :invalid="$v.code.$invalid && $v.code.$error"
+            :invalid="isCodeError"
             id="code"
             name="code"
             fluid
           />
           <label for="code">Введите код</label>
         </FloatLabel>
-        <InputTextError v-if="$v.code.$invalid && $v.code.$error">
+        <InputTextError v-if="isCodeError">
           {{ $v.code.$errors[0]?.$message }}
         </InputTextError>
       </div>
@@ -106,6 +109,7 @@ const submitHandler = async () => {
       </AGButton>
       <AGButton
         label="Продолжить"
+        :disabled="isChannelError || isCodeError"
         @click="submitHandler"
         :loading="authStore.isCheckSessionCodeLoading"
       />

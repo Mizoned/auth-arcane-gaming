@@ -9,7 +9,7 @@ import { CountryFlag } from '@/entities/countries';
 import { useAuthStore } from '@/entities/auth';
 import { useCountriesStore } from '@/entities/countries';
 import { helpers, required } from '@vuelidate/validators';
-import useVuelidate from '@vuelidate/core';
+import { useVuelidate } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
 
 const authStore = useAuthStore();
@@ -38,6 +38,9 @@ const submitHandler = async () => {
     authStore.nextStep();
   });
 };
+
+const isMobilePhoneError = computed(() => $v.value.mobilePhone.$invalid && $v.value.mobilePhone.$error);
+const isCountryError = computed(() => $v.value.country.$invalid && $v.value.country.$error);
 </script>
 
 <template>
@@ -53,7 +56,7 @@ const submitHandler = async () => {
             v-model="authStore.selectedCountry"
             :options="countriesStore.countries"
             @close="$v.country.$touch()"
-            :invalid="$v.country.$invalid && $v.country.$error"
+            :invalid="isCountryError"
             fluid
             useSearch
           >
@@ -70,7 +73,7 @@ const submitHandler = async () => {
           </AGSelect>
           <label for="country">Страна</label>
         </FloatLabel>
-        <InputTextError v-if="$v.country.$invalid && $v.country.$error">
+        <InputTextError v-if="isCountryError">
           {{ $v.country.$errors[0]?.$message }}
         </InputTextError>
       </div>
@@ -79,14 +82,15 @@ const submitHandler = async () => {
           <InputText
             v-model="authStore.mobilePhone"
             @blur="$v.mobilePhone.$touch()"
-            :invalid="$v.mobilePhone.$invalid && $v.mobilePhone.$error"
+            :invalid="isMobilePhoneError"
+            :disabled="authStore.selectedCountry === null"
             id="phone"
             name="phone"
             fluid
           />
           <label for="phone">Номер телефона</label>
         </FloatLabel>
-        <InputTextError v-if="$v.mobilePhone.$invalid && $v.mobilePhone.$error">
+        <InputTextError v-if="isMobilePhoneError">
           {{ $v.mobilePhone.$errors[0]?.$message }}
         </InputTextError>
       </div>
@@ -94,6 +98,7 @@ const submitHandler = async () => {
     <div class="auth-form__actions">
       <AGButton
         label="Продолжить"
+        :disabled="isMobilePhoneError || isCountryError"
         @click="submitHandler"
         :loading="authStore.isCreateSessionLoading"
       />
