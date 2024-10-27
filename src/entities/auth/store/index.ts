@@ -1,18 +1,23 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Steps } from '../types';
 import type { Country } from '@/entities/countries';
-import type { Channel } from '@/entities/channels';
+import { type Channel, useChannelsStore } from '@/entities/channels';
+import { checkSession, createSession, sendSession } from '../api';
 
 export const useAuthStore = defineStore('AuthStore', () => {
+  const channelsStore = useChannelsStore();
   const mobilePhone = ref<string>('');
   const selectedCountry = ref<Country | null>(null);
   const selectedChannel = ref<Channel | null>(null);
   const code = ref<string>('');
   const timer = ref<number>(0);
   const steps: Steps[] = ['phone', 'code', 'channel'];
-  const currentStep = ref<number>(0);
+  const currentStep = ref<number>(1);
   const currentStepName = computed<Steps>(() => steps[currentStep.value]);
+  const isCreateSessionLoading = ref<boolean>(false);
+  const sessionId = ref<string | null>(null);
+  const sessionExpiredAt = ref<Date | null>(null);
 
   const nextStep = (): void => {
     if (currentStep.value < steps.length - 1) {
@@ -31,6 +36,64 @@ export const useAuthStore = defineStore('AuthStore', () => {
       currentStep.value--;
     }
   };
+
+  const createSessionToReceiveCode = async () => {
+    try {
+      isCreateSessionLoading.value = true;
+      const type = selectedChannel.value?.type ?? null;
+      const { data } = await createSession(mobilePhone.value, type, true);
+
+      sessionId.value = data.session_id;
+      sessionExpiredAt.value = new Date(data.session_expired_at);
+      channelsStore.channels = data.channels;
+
+      const targetChannel: Channel | undefined = data.sent_to !== 'none'
+        ? channelsStore.channels.find((channel: Channel) => channel.type === data.sent_to)
+        : selectedChannel.value
+          ? channelsStore.channels.find((channel: Channel) => channel.type === selectedChannel.value!.type)
+          : undefined;
+
+      if (targetChannel) {
+        selectedChannel.value = targetChannel;
+        timer.value = targetChannel.timeout || 0;
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      isCreateSessionLoading.value = false;
+    }
+  }
+
+  const resendCode = async () => {
+    try {
+      if (sessionId.value === null || selectedChannel.value === null) return;
+      const response = await sendSession(sessionId.value, selectedChannel.value.type);
+      console.log(response);
+    } catch (error) {
+      throw error;
+    } finally {
+      console.log('finally send code');
+    }
+  }
+
+  const checkSessionCode = async () => {
+    try {
+      if (sessionId.value === null || !code.value.length) return;
+      const { data } = await checkSession(sessionId.value, code.value);
+      console.log(data.verify_token);
+    } catch (error) {
+      throw error;
+    } finally {
+      console.log('finally check code');
+    }
+  }
+
+  watch(selectedChannel, (newValue: Channel | null) => {
+    if (newValue && !newValue.is_active) {
+      setStep(2);
+    }
+  });
+
   return {
     mobilePhone,
     code,
@@ -38,8 +101,12 @@ export const useAuthStore = defineStore('AuthStore', () => {
     selectedCountry,
     selectedChannel,
     currentStepName,
+    sessionExpiredAt,
     nextStep,
     prevStep,
-    setStep
+    setStep,
+    createSessionToReceiveCode,
+    resendCode,
+    checkSessionCode
   };
 });

@@ -15,9 +15,12 @@ import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
 const authStore = useAuthStore();
 const channelsStore = useChannelsStore();
 
-const sendCode = () => {
-  //TODO отправка кода + проверка что пользователю можно отправить в тот мессенджер
-  authStore.timer = 30;
+const resendCode = async () => {
+  if (authStore.sessionExpiredAt && authStore.sessionExpiredAt <= new Date()) {
+    await authStore.createSessionToReceiveCode();
+  } else {
+    await authStore.resendCode();
+  }
 }
 
 const rules = computed(() => ({
@@ -39,7 +42,7 @@ const $v = useVuelidate(rules, formData);
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
-  authStore.nextStep();
+  await authStore.checkSessionCode();
 }
 </script>
 
@@ -83,7 +86,7 @@ const submitHandler = async () => {
           <InputOpt
             v-model="authStore.code"
             :timer="authStore.timer"
-            @start-timer="sendCode"
+            @start-timer="resendCode"
             @update:timer="(value) => authStore.timer = value"
             @blur="$v.code.$touch()"
             :invalid="$v.code.$invalid && $v.code.$error"

@@ -34,7 +34,9 @@ const $v = useVuelidate(rules, formData);
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
-  authStore.nextStep();
+  await authStore.createSessionToReceiveCode().then(() => {
+    authStore.nextStep();
+  });
 }
 </script>
 
