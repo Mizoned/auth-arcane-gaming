@@ -13,9 +13,12 @@ export const useAuthStore = defineStore('AuthStore', () => {
   const code = ref<string>('');
   const timer = ref<number>(0);
   const steps: Steps[] = ['phone', 'code', 'channel'];
-  const currentStep = ref<number>(1);
+  const currentStep = ref<number>(0);
   const currentStepName = computed<Steps>(() => steps[currentStep.value]);
   const isCreateSessionLoading = ref<boolean>(false);
+  const isCheckSessionCodeLoading = ref<boolean>(false);
+  const isResendCodeLoading = ref<boolean>(false);
+  const isCheckSubscribeStatusLoading = ref<boolean>(false);
   const sessionId = ref<string | null>(null);
   const sessionExpiredAt = ref<Date | null>(null);
 
@@ -50,12 +53,12 @@ export const useAuthStore = defineStore('AuthStore', () => {
       const targetChannel: Channel | undefined = data.sent_to !== 'none'
         ? channelsStore.channels.find((channel: Channel) => channel.type === data.sent_to)
         : selectedChannel.value
-          ? channelsStore.channels.find((channel: Channel) => channel.type === selectedChannel.value!.type)
-          : undefined;
+          ? channelsStore.channels.find((channel: Channel) => channel.type === selectedChannel.value?.type)
+          : channelsStore.channels.find((channel: Channel) => channel.timeout > 0);
 
       if (targetChannel) {
         selectedChannel.value = targetChannel;
-        timer.value = targetChannel.timeout || 0;
+        timer.value = targetChannel.timeout;
       }
     } catch (error) {
       throw error;
@@ -67,30 +70,53 @@ export const useAuthStore = defineStore('AuthStore', () => {
   const resendCode = async () => {
     try {
       if (sessionId.value === null || selectedChannel.value === null) return;
-      const response = await sendSession(sessionId.value, selectedChannel.value.type);
-      console.log(response);
+      isResendCodeLoading.value = true;
+
+      if (sessionExpiredAt.value && sessionExpiredAt.value <= new Date()) {
+        await createSessionToReceiveCode();
+      } else {
+        const { data } = await sendSession(sessionId.value, selectedChannel.value.type);
+
+        timer.value = data.channel.timeout;
+      }
     } catch (error) {
       throw error;
     } finally {
-      console.log('finally send code');
+      isResendCodeLoading.value = false;
     }
   }
 
   const checkSessionCode = async () => {
     try {
+      isCheckSessionCodeLoading.value = true;
       if (sessionId.value === null || !code.value.length) return;
       const { data } = await checkSession(sessionId.value, code.value);
       console.log(data.verify_token);
     } catch (error) {
       throw error;
     } finally {
-      console.log('finally check code');
+      isCheckSessionCodeLoading.value = false;
+    }
+  }
+
+  const checkSubscribeStatus = async () => {
+    try {
+      isCheckSubscribeStatusLoading.value = true;
+      await resendCode();
+
+      if (selectedChannel.value?.is_active) {
+        prevStep();
+      }
+    } catch (error) {
+      throw error;
+    } finally {
+      isCheckSubscribeStatusLoading.value = false;
     }
   }
 
   watch(selectedChannel, (newValue: Channel | null) => {
     if (newValue && !newValue.is_active) {
-      setStep(2);
+      setStep(1);
     }
   });
 
@@ -101,12 +127,12 @@ export const useAuthStore = defineStore('AuthStore', () => {
     selectedCountry,
     selectedChannel,
     currentStepName,
-    sessionExpiredAt,
     nextStep,
     prevStep,
     setStep,
     createSessionToReceiveCode,
     resendCode,
-    checkSessionCode
+    checkSessionCode,
+    checkSubscribeStatus
   };
 });

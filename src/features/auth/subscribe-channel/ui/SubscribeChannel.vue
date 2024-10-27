@@ -4,6 +4,10 @@ import AGButton from '@/shared/ui/buttons/AGButton.vue';
 import { useAuthStore } from '@/entities/auth';
 
 const authStore = useAuthStore();
+
+const checkStatus = async () => {
+  await authStore.checkSubscribeStatus();
+}
 </script>
 
 <template>
@@ -28,14 +32,13 @@ const authStore = useAuthStore();
       {{ authStore.selectedChannel.name }}
     </div>
     <div class="auth-form__description">
-      Для использования данного канала связи вам необходимо авторизоваться в
-      боте
+      {{ authStore.selectedChannel?.description }}
     </div>
   </div>
   <div class="auth-form__body">
     <div class="auth-form__actions">
-      <AGButton label="Авторизоваться в боте" />
-      <AGButton label="Проверить статус" text />
+      <AGButton label="Авторизоваться в боте" :to="authStore.selectedChannel?.link" target="_blank" />
+      <AGButton label="Проверить статус" text @click="checkStatus" />
     </div>
   </div>
 </template>
