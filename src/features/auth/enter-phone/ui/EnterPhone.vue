@@ -84,6 +84,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
             @blur="$v.mobilePhone.$touch()"
             :invalid="isMobilePhoneError"
             :disabled="authStore.selectedCountry === null"
+            type="number"
             id="phone"
             name="phone"
             fluid

@@ -4,9 +4,13 @@ interface InputTextProps {
   fluid?: boolean;
   invalid?: boolean;
   disabled?: boolean;
+  type?: string
 }
 
-defineProps<InputTextProps>();
+withDefaults(defineProps<InputTextProps>(), {
+  type: 'text'
+});
+
 const emits = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>();
@@ -26,9 +30,9 @@ const inputHandler = (event: Event) => {
       { 'input-text--disabled': disabled },
       { 'is-invalid': invalid }
     ]"
+    :type="type"
     :value="modelValue"
     @input="inputHandler"
-    type="text"
   />
 </template>
 
