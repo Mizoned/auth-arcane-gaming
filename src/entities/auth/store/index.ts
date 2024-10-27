@@ -9,9 +9,9 @@ export const useAuthStore = defineStore('AuthStore', () => {
   const selectedCountry = ref<Country | null>(null);
   const selectedChannel = ref<Channel | null>(null);
   const code = ref<string>('');
-
+  const timer = ref<number>(0);
   const steps: Steps[] = ['phone', 'code', 'channel'];
-  const currentStep = ref<number>(0);
+  const currentStep = ref<number>(1);
   const currentStepName = computed<Steps>(() => steps[currentStep.value]);
 
   const nextStep = (): void => {
@@ -34,6 +34,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
   return {
     mobilePhone,
     code,
+    timer,
     selectedCountry,
     selectedChannel,
     currentStepName,

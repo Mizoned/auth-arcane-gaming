@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/entities/auth';
 import FloatLabel from '@/shared/ui/labels/FloatLabel.vue';
-import InputText from '@/shared/ui/inputs/InputText.vue';
 import IconArrow from '@/shared/ui/icons/IconArrow.vue';
 import AGButton from '@/shared/ui/buttons/AGButton.vue';
 import AGSelect from '@/shared/ui/selects/AGSelect.vue';
 import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
+import InputOpt from '@/shared/ui/inputs/InputOpt.vue';
 import { useChannelsStore } from '@/entities/channels';
 
 const authStore = useAuthStore();
 const channelsStore = useChannelsStore();
+
+const sendCode = () => {
+  //TODO отправка кода + проверка что пользователю можно отправить в тот мессенджер
+}
 </script>
 
 <template>
@@ -41,7 +45,14 @@ const channelsStore = useChannelsStore();
         <label for="country">Способ получения кода</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="authStore.code" id="code" name="code" fluid />
+        <InputOpt
+          v-model="authStore.code"
+          :timer="authStore.timer"
+          @start-timer="sendCode"
+          id="code"
+          name="code"
+          fluid
+        />
         <label for="code">Введите код</label>
       </FloatLabel>
     </div>
