@@ -6,10 +6,16 @@ interface TextTimerProps {
 }
 
 const props = defineProps<TextTimerProps>();
+const emits = defineEmits<{
+  (e: 'update:seconds', value: number): void;
+}>();
 
 const timeLeft = ref<number>(props.seconds);
-
 const timerInterval = ref<number | null>(null);
+
+const updateSecondsHandler = () => {
+  emits('update:seconds', timeLeft.value);
+}
 
 const startTimer = () => {
   if (timerInterval.value) return;
@@ -17,6 +23,7 @@ const startTimer = () => {
   timerInterval.value = setInterval(() => {
     if (timeLeft.value > 0) {
       timeLeft.value--;
+      updateSecondsHandler();
     } else {
       stopTimer();
     }
@@ -27,6 +34,8 @@ const stopTimer = () => {
   if (timerInterval.value) {
     clearInterval(timerInterval.value);
     timerInterval.value = null;
+    timeLeft.value = 0;
+    updateSecondsHandler();
   }
 }
 

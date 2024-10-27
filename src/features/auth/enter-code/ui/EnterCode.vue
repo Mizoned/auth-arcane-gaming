@@ -13,6 +13,7 @@ const channelsStore = useChannelsStore();
 
 const sendCode = () => {
   //TODO отправка кода + проверка что пользователю можно отправить в тот мессенджер
+  authStore.timer = 30;
 }
 </script>
 
@@ -49,6 +50,7 @@ const sendCode = () => {
           v-model="authStore.code"
           :timer="authStore.timer"
           @start-timer="sendCode"
+          @update:timer="(value) => authStore.timer = value"
           id="code"
           name="code"
           fluid

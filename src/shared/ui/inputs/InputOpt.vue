@@ -10,12 +10,16 @@ interface InputOptProps {
 defineProps<InputOptProps>();
 
 const emits = defineEmits<{
-  (e: 'update:timer', value: string): void;
+  (e: 'update:timer', value: number): void;
   (e: 'startTimer'): void
 }>();
 
 const startTimerHandler = () => {
   emits('startTimer');
+}
+
+const updateTimerHandler = (value: number) => {
+  emits('update:timer', value);
 }
 </script>
 
@@ -33,6 +37,7 @@ const startTimerHandler = () => {
       <TextTimer
         v-else
         :seconds="timer"
+        @update:seconds="updateTimerHandler"
       />
     </div>
   </div>
