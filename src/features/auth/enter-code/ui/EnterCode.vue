@@ -106,6 +106,7 @@ const submitHandler = async () => {
             :invalid="isCodeError"
             id="code"
             name="code"
+            type="number"
             fluid
           />
           <label for="code">Введите код</label>
