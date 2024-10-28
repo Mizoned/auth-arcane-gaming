@@ -7,10 +7,11 @@ import AGSelect from '@/shared/ui/selects/AGSelect.vue';
 import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
 import InputOpt from '@/shared/ui/inputs/InputOpt.vue';
 import { useChannelsStore } from '@/entities/channels';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { helpers, required } from '@vuelidate/validators';
-import useVuelidate from '@vuelidate/core';
+import useVuelidate, { type ServerErrors } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
+import axios from 'axios';
 
 const authStore = useAuthStore();
 const channelsStore = useChannelsStore();
@@ -33,7 +34,12 @@ const formData = {
   code: computed(() => authStore.code)
 };
 
-const $v = useVuelidate(rules, formData);
+const $externalResults = ref<ServerErrors>({
+  channel: '',
+  code: ''
+});
+
+const $v = useVuelidate(rules, formData, { $externalResults });
 
 const isChannelError = computed(() => $v.value.channel.$invalid && $v.value.channel.$error);
 const isCodeError = computed(() => $v.value.code.$invalid && $v.value.code.$error);
@@ -41,7 +47,13 @@ const isCodeError = computed(() => $v.value.code.$invalid && $v.value.code.$erro
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
-  await authStore.checkSessionCode();
+  await authStore.checkSessionCode().catch((error) => {
+    if (axios.isAxiosError(error) && error.status === 400) {
+      $externalResults.value.code = error.response!.data.error;
+    } else {
+      console.error(error);
+    }
+  });
 };
 </script>
 
@@ -59,6 +71,7 @@ const submitHandler = async () => {
         <FloatLabel>
           <AGSelect
             v-model="authStore.selectedChannel"
+            @update:model-value="() => $externalResults.channel = ''"
             :options="channelsStore.channels"
             @close="$v.channel.$touch()"
             :invalid="isChannelError"
@@ -85,6 +98,7 @@ const submitHandler = async () => {
         <FloatLabel>
           <InputOpt
             v-model="authStore.code"
+            @update:model-value="() => $externalResults.code = ''"
             :timer="authStore.timer"
             @start-timer="resendCode"
             @update:timer="value => (authStore.timer = value)"

@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
-import type { Steps } from '../types';
+import type { SendSessionErrorResponse, Steps } from '../types';
 import type { Country } from '@/entities/countries';
 import { type Channel, useChannelsStore } from '@/entities/channels';
 import { checkSession, createSession, sendSession } from '../api';
+import axios, { type AxiosError } from 'axios';
 
 export const useAuthStore = defineStore('AuthStore', () => {
   const channelsStore = useChannelsStore();
@@ -11,6 +12,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
   const selectedCountry = ref<Country | null>(null);
   const selectedChannel = ref<Channel | null>(null);
   const code = ref<string>('');
+  const codeAttempts = ref<number | null>(null);
   const timer = ref<number>(0);
   const steps: Steps[] = ['phone', 'code', 'channel'];
   const currentStep = ref<number>(0);
@@ -88,6 +90,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
           selectedChannel.value.type
         );
 
+        selectedChannel.value = data.channel;
         timer.value = data.channel.timeout;
       }
     } catch (error) {
@@ -104,6 +107,18 @@ export const useAuthStore = defineStore('AuthStore', () => {
       const { data } = await checkSession(sessionId.value, code.value);
       console.log(data.verify_token);
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const { response } = error as AxiosError<SendSessionErrorResponse>;
+        const errorData = response!.data;
+
+        if (errorData.sys_message === 'ERROR_MESSAGE_WRONG_CODE' && errorData.error_params?.count) {
+          codeAttempts.value = errorData.error_params.count;
+        } else {
+          codeAttempts.value = null;
+          sessionExpiredAt.value = null;
+          prevStep();
+        }
+      }
       throw error;
     } finally {
       isCheckSessionCodeLoading.value = false;
@@ -125,19 +140,23 @@ export const useAuthStore = defineStore('AuthStore', () => {
     }
   };
 
-  watch(selectedChannel, (newValue: Channel | null) => {
-    if (newValue && !newValue.is_active) {
-      setStep(1);
+  watch(selectedChannel, (newValue: Channel | null, oldValue: Channel | null) => {
+    if (newValue && !newValue.is_active && currentStepName.value !== 'channel') {
+      setStep(2);
+      console.log(newValue, oldValue);
     }
   });
 
   return {
     mobilePhone,
     code,
+    codeAttempts,
     timer,
     selectedCountry,
     selectedChannel,
     currentStepName,
+    sessionExpiredAt,
+    sessionId,
     isCreateSessionLoading,
     isCheckSessionCodeLoading,
     isResendCodeLoading,

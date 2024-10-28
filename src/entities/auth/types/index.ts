@@ -19,3 +19,13 @@ export interface CheckSessionResponse {
   verify_token: string;
   is_test: boolean;
 }
+
+export type SysMessages = 'ERROR_SESSION_EXPIRED' | 'ERROR_MESSAGE_WRONG_CODE' | 'ERROR_BAD_REQUEST'
+
+export interface SendSessionErrorResponse {
+  error: string;
+  status: number;
+  error_params: { count?: number };
+  success: boolean;
+  sys_message: SysMessages;
+}

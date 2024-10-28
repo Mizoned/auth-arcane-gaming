@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import FloatLabel from '@/shared/ui/labels/FloatLabel.vue';
 import InputText from '@/shared/ui/inputs/InputText.vue';
 import AGButton from '@/shared/ui/buttons/AGButton.vue';
@@ -9,8 +9,9 @@ import { CountryFlag } from '@/entities/countries';
 import { useAuthStore } from '@/entities/auth';
 import { useCountriesStore } from '@/entities/countries';
 import { helpers, required } from '@vuelidate/validators';
-import { useVuelidate } from '@vuelidate/core';
+import { type ServerErrors, useVuelidate } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
+import axios from 'axios';
 
 const authStore = useAuthStore();
 const countriesStore = useCountriesStore();
@@ -29,14 +30,28 @@ const formData = {
   mobilePhone: computed(() => authStore.mobilePhone)
 };
 
-const $v = useVuelidate(rules, formData);
+const $externalResults = ref<ServerErrors>({
+  country: '',
+  mobilePhone: ''
+});
+
+const $v = useVuelidate(rules, formData, { $externalResults });
 
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
-  await authStore.createSessionToReceiveCode().then(() => {
-    authStore.nextStep();
-  });
+  await authStore.createSessionToReceiveCode()
+    .then(() => {
+      authStore.nextStep();
+    })
+    .catch((error) => {
+      if (axios.isAxiosError(error) && error.status === 400) {
+        $externalResults.value.mobilePhone = error.response!.data.error[0];
+      } else {
+        console.error(error);
+      }
+    }
+  );
 };
 
 const isMobilePhoneError = computed(() => $v.value.mobilePhone.$invalid && $v.value.mobilePhone.$error);
@@ -54,6 +69,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
         <FloatLabel>
           <AGSelect
             v-model="authStore.selectedCountry"
+            @update:model-value="() => $externalResults.country = ''"
             :options="countriesStore.countries"
             @close="$v.country.$touch()"
             :invalid="isCountryError"
@@ -84,6 +100,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
             @blur="$v.mobilePhone.$touch()"
             :invalid="isMobilePhoneError"
             :disabled="authStore.selectedCountry === null"
+            @update:model-value="() => $externalResults.mobilePhone = ''"
             type="number"
             id="phone"
             name="phone"

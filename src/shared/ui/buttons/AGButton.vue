@@ -102,10 +102,7 @@ const componentTag = isLink ? 'a' : 'button';
 .ag-button.ag-button--text {
   padding: 0;
   background-color: transparent;
-
-  .ag-button__label {
-    color: var(--ag-blue-color);
-  }
+  color: var(--ag-blue-color);
 }
 
 .ag-button.ag-button--loading {
