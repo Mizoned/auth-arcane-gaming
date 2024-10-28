@@ -9,7 +9,7 @@ type AGSelectOptionBase = {
 
 type AGSelectOption<T> = T & AGSelectOptionBase;
 
-interface AGSelectProps {
+const props = withDefaults(defineProps<{
   modelValue: AGSelectOption<T> | null;
   options: AGSelectOption<T>[];
   fluid?: boolean;
@@ -17,9 +17,7 @@ interface AGSelectProps {
   invalid?: boolean;
   emptyText?: string;
   searchPlaceholder?: string;
-}
-
-const props = withDefaults(defineProps<AGSelectProps>(), {
+}>(), {
   emptyText: 'Ничего не найдено'
 });
 

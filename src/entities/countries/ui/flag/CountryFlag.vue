@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CountryCode } from '@/entities/country/types';
+import type { CountryCode } from '../../types';
 
 interface AGFlagProps {
   flag: CountryCode;

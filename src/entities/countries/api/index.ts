@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from 'axios';
-import type { Country } from '@/entities/country/types';
+import type { Country } from '../types';
 
 export const getCountriesByFile = async (): Promise<
   AxiosResponse<Country[]>
