@@ -1,24 +1,37 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Language, LanguageType, Localization, Localizations } from '../types';
 import { ru, en } from '../locales';
 
 export const useLanguagesStore = defineStore('LanguagesStore', () => {
-  const isLoading = ref<boolean>(false);
-  const languages = ref<Language[]>([
+  const languages: Language[] = [
     { name: 'Русский', value: 'ru' },
     { name: 'English', value: 'en' }
-  ]);
+  ];
   const localizations: Localizations = { ru, en };
 
-  const selectedLanguage = ref<LanguageType>(languages.value[0].value);
+  const allowedLanguages: LanguageType[] = languages.map(lang => lang.value);
+  const localStorageLanguage: string | null = localStorage.getItem('language');
+
+  let installLanguage: LanguageType | null;
+
+  if (localStorageLanguage && allowedLanguages.includes(localStorageLanguage as LanguageType)) {
+    installLanguage = localStorageLanguage as LanguageType;
+  } else {
+    installLanguage = allowedLanguages[0];
+  }
+
+  const selectedLanguage = ref<LanguageType>(installLanguage);
 
   const currentLocale = computed<Localization>(() => {
     return localizations[selectedLanguage.value];
   });
 
+  watch(selectedLanguage, () => {
+    localStorage.setItem('language', selectedLanguage.value);
+  });
+
   return {
-    isLoading,
     languages,
     selectedLanguage,
     localizations,
