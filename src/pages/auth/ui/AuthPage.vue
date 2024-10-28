@@ -27,9 +27,15 @@ const isPhoneOrCodeSteps = computed<boolean>(
       <div v-if="isPhoneOrCodeSteps" class="auth-form__logo">
         {{ languageStore.currentLocale.logotypeText }}
       </div>
-      <EnterPhone v-if="authStore.currentStepName === 'phone'" />
-      <EnterCode v-if="authStore.currentStepName === 'code'" />
-      <SubscribeChannel v-if="authStore.currentStepName === 'channel'" />
+      <KeepAlive>
+        <EnterPhone v-if="authStore.currentStepName === 'phone'" />
+      </KeepAlive>
+      <KeepAlive>
+        <EnterCode v-if="authStore.currentStepName === 'code'" />
+      </KeepAlive>
+      <KeepAlive>
+        <SubscribeChannel v-if="authStore.currentStepName === 'channel'" />
+      </KeepAlive>
       <div v-if="isPhoneOrCodeSteps" class="auth-form__footer">
         <div class="auth-form__language">
           <ChangeLanguage />

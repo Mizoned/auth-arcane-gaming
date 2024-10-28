@@ -9,17 +9,20 @@ type AGSelectOptionBase = {
 
 type AGSelectOption<T> = T & AGSelectOptionBase;
 
-const props = withDefaults(defineProps<{
-  modelValue: AGSelectOption<T> | null;
-  options: AGSelectOption<T>[];
-  fluid?: boolean;
-  useSearch?: boolean;
-  invalid?: boolean;
-  emptyText?: string;
-  searchPlaceholder?: string;
-}>(), {
-  emptyText: 'Ничего не найдено'
-});
+const props = withDefaults(
+  defineProps<{
+    modelValue: AGSelectOption<T> | null;
+    options: AGSelectOption<T>[];
+    fluid?: boolean;
+    useSearch?: boolean;
+    invalid?: boolean;
+    emptyText?: string;
+    searchPlaceholder?: string;
+  }>(),
+  {
+    emptyText: 'Ничего не найдено'
+  }
+);
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: AGSelectOption<T>): void;
