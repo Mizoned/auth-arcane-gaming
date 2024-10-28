@@ -7,7 +7,7 @@ import AGSelect from '@/shared/ui/selects/AGSelect.vue';
 import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
 import InputOpt from '@/shared/ui/inputs/InputOpt.vue';
 import { useChannelsStore } from '@/entities/channels';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { helpers, required } from '@vuelidate/validators';
 import { useVuelidate,  type ServerErrors } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
@@ -26,10 +26,10 @@ const resendCode = async () => {
 
 const rules = computed(() => ({
   channel: {
-    required: helpers.withMessage(currentLocale.value.validationErrors.required, required)
+    required: helpers.withMessage(() => currentLocale.value.validationErrors.required, required)
   },
   code: {
-    required: helpers.withMessage(currentLocale.value.validationErrors.required, required)
+    required: helpers.withMessage(() =>  currentLocale.value.validationErrors.required, required)
   }
 }));
 
