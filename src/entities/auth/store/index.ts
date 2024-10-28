@@ -111,7 +111,10 @@ export const useAuthStore = defineStore('AuthStore', () => {
         const { response } = error as AxiosError<SendSessionErrorResponse>;
         const errorData = response!.data;
 
-        if (errorData.sys_message === 'ERROR_MESSAGE_WRONG_CODE' && errorData.error_params?.count) {
+        if (
+          errorData.sys_message === 'ERROR_MESSAGE_WRONG_CODE' &&
+          errorData.error_params?.count
+        ) {
           codeAttempts.value = errorData.error_params.count;
         } else {
           codeAttempts.value = null;
@@ -140,12 +143,19 @@ export const useAuthStore = defineStore('AuthStore', () => {
     }
   };
 
-  watch(selectedChannel, (newValue: Channel | null, oldValue: Channel | null) => {
-    if (newValue && !newValue.is_active && currentStepName.value !== 'channel') {
-      setStep(2);
-      console.log(newValue, oldValue);
+  watch(
+    selectedChannel,
+    (newValue: Channel | null, oldValue: Channel | null) => {
+      if (
+        newValue &&
+        !newValue.is_active &&
+        currentStepName.value !== 'channel'
+      ) {
+        setStep(2);
+        console.log(newValue, oldValue);
+      }
     }
-  });
+  );
 
   return {
     mobilePhone,

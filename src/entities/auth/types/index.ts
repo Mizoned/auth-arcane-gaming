@@ -20,7 +20,10 @@ export interface CheckSessionResponse {
   is_test: boolean;
 }
 
-export type SysMessages = 'ERROR_SESSION_EXPIRED' | 'ERROR_MESSAGE_WRONG_CODE' | 'ERROR_BAD_REQUEST'
+export type SysMessages =
+  | 'ERROR_SESSION_EXPIRED'
+  | 'ERROR_MESSAGE_WRONG_CODE'
+  | 'ERROR_BAD_REQUEST';
 
 export interface SendSessionErrorResponse {
   error: string;

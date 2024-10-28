@@ -7,9 +7,9 @@ import AGSelect from '@/shared/ui/selects/AGSelect.vue';
 import AGSelectItem from '@/shared/ui/selects/AGSelectItem.vue';
 import InputOpt from '@/shared/ui/inputs/InputOpt.vue';
 import { useChannelsStore } from '@/entities/channels';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { helpers, required } from '@vuelidate/validators';
-import { useVuelidate,  type ServerErrors } from '@vuelidate/core';
+import { useVuelidate, type ServerErrors } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
 import axios from 'axios';
 import { useLanguagesStore } from '@/entities/languages';
@@ -26,10 +26,16 @@ const resendCode = async () => {
 
 const rules = computed(() => ({
   channel: {
-    required: helpers.withMessage(() => currentLocale.value.validationErrors.required, required)
+    required: helpers.withMessage(
+      () => currentLocale.value.validationErrors.required,
+      required
+    )
   },
   code: {
-    required: helpers.withMessage(() =>  currentLocale.value.validationErrors.required, required)
+    required: helpers.withMessage(
+      () => currentLocale.value.validationErrors.required,
+      required
+    )
   }
 }));
 
@@ -45,13 +51,17 @@ const $externalResults = ref<ServerErrors>({
 
 const $v = useVuelidate(rules, formData, { $externalResults });
 
-const isChannelError = computed(() => $v.value.channel.$invalid && $v.value.channel.$error);
-const isCodeError = computed(() => $v.value.code.$invalid && $v.value.code.$error);
+const isChannelError = computed(
+  () => $v.value.channel.$invalid && $v.value.channel.$error
+);
+const isCodeError = computed(
+  () => $v.value.code.$invalid && $v.value.code.$error
+);
 
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
-  await authStore.checkSessionCode().catch((error) => {
+  await authStore.checkSessionCode().catch(error => {
     if (axios.isAxiosError(error) && error.status === 400) {
       $externalResults.value.code = error.response!.data.error;
     } else {
@@ -75,7 +85,7 @@ const submitHandler = async () => {
         <FloatLabel>
           <AGSelect
             v-model="authStore.selectedChannel"
-            @update:model-value="() => $externalResults.channel = ''"
+            @update:model-value="() => ($externalResults.channel = '')"
             :options="channelsStore.channels"
             @close="$v.channel.$touch()"
             :invalid="isChannelError"
@@ -102,7 +112,7 @@ const submitHandler = async () => {
         <FloatLabel>
           <InputOpt
             v-model="authStore.code"
-            @update:model-value="() => $externalResults.code = ''"
+            @update:model-value="() => ($externalResults.code = '')"
             :timer="authStore.timer"
             @start-timer="resendCode"
             @update:timer="value => (authStore.timer = value)"
@@ -122,7 +132,12 @@ const submitHandler = async () => {
       </div>
     </div>
     <div class="auth-form__actions">
-      <AGButton :label="currentLocale.step1.buttonPrevText" text size-icon="sm" @click="authStore.prevStep()">
+      <AGButton
+        :label="currentLocale.step1.buttonPrevText"
+        text
+        size-icon="sm"
+        @click="authStore.prevStep()"
+      >
         <template #beforeIcon>
           <IconArrow />
         </template>

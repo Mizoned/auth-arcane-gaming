@@ -4,7 +4,7 @@ interface InputTextProps {
   fluid?: boolean;
   invalid?: boolean;
   disabled?: boolean;
-  type?: string
+  type?: string;
 }
 
 withDefaults(defineProps<InputTextProps>(), {

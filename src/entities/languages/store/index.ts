@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
-import type { Language, LanguageType, Localization, Localizations } from '../types';
+import type {
+  Language,
+  LanguageType,
+  Localization,
+  Localizations
+} from '../types';
 import { ru, en } from '../locales';
 
 export const useLanguagesStore = defineStore('LanguagesStore', () => {
@@ -15,7 +20,10 @@ export const useLanguagesStore = defineStore('LanguagesStore', () => {
 
   let installLanguage: LanguageType | null;
 
-  if (localStorageLanguage && allowedLanguages.includes(localStorageLanguage as LanguageType)) {
+  if (
+    localStorageLanguage &&
+    allowedLanguages.includes(localStorageLanguage as LanguageType)
+  ) {
     installLanguage = localStorageLanguage as LanguageType;
   } else {
     installLanguage = allowedLanguages[0];

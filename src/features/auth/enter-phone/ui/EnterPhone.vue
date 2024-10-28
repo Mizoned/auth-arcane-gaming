@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import FloatLabel from '@/shared/ui/labels/FloatLabel.vue';
 import InputText from '@/shared/ui/inputs/InputText.vue';
 import AGButton from '@/shared/ui/buttons/AGButton.vue';
@@ -22,10 +22,16 @@ const { currentLocale } = storeToRefs(languageStore);
 
 const rules = computed(() => ({
   country: {
-    required: helpers.withMessage(() => currentLocale.value.validationErrors.required, required)
+    required: helpers.withMessage(
+      () => currentLocale.value.validationErrors.required,
+      required
+    )
   },
   mobilePhone: {
-    required: helpers.withMessage(() => currentLocale.value.validationErrors.required, required)
+    required: helpers.withMessage(
+      () => currentLocale.value.validationErrors.required,
+      required
+    )
   }
 }));
 
@@ -44,28 +50,34 @@ const $v = useVuelidate(rules, formData, { $externalResults });
 const submitHandler = async () => {
   if (!(await $v.value.$validate())) return;
 
-  await authStore.createSessionToReceiveCode()
+  await authStore
+    .createSessionToReceiveCode()
     .then(() => {
       authStore.nextStep();
     })
-    .catch((error) => {
+    .catch(error => {
       if (axios.isAxiosError(error) && error.status === 400) {
         $externalResults.value.mobilePhone = error.response!.data.error[0];
       } else {
         console.error(error);
       }
-    }
-  );
+    });
 };
 
-const isMobilePhoneError = computed(() => $v.value.mobilePhone.$invalid && $v.value.mobilePhone.$error);
-const isCountryError = computed(() => $v.value.country.$invalid && $v.value.country.$error);
+const isMobilePhoneError = computed(
+  () => $v.value.mobilePhone.$invalid && $v.value.mobilePhone.$error
+);
+const isCountryError = computed(
+  () => $v.value.country.$invalid && $v.value.country.$error
+);
 </script>
 
 <template>
   <div class="auth-form__header">
     <div class="auth-form__title">{{ currentLocale.step0.title }}</div>
-    <div class="auth-form__description">{{ currentLocale.step0.description }}</div>
+    <div class="auth-form__description">
+      {{ currentLocale.step0.description }}
+    </div>
   </div>
   <div class="auth-form__body">
     <div class="auth-form__fields">
@@ -73,7 +85,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
         <FloatLabel>
           <AGSelect
             v-model="authStore.selectedCountry"
-            @update:model-value="() => $externalResults.country = ''"
+            @update:model-value="() => ($externalResults.country = '')"
             :options="countriesStore.countries"
             @close="$v.country.$touch()"
             :invalid="isCountryError"
@@ -106,7 +118,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
             @blur="$v.mobilePhone.$touch()"
             :invalid="isMobilePhoneError"
             :disabled="authStore.selectedCountry === null"
-            @update:model-value="() => $externalResults.mobilePhone = ''"
+            @update:model-value="() => ($externalResults.mobilePhone = '')"
             type="number"
             id="phone"
             name="phone"

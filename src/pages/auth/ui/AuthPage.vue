@@ -24,7 +24,9 @@ const isPhoneOrCodeSteps = computed<boolean>(
 <template>
   <div :class="['auth-page']">
     <div :class="['auth-form', `auth-form--${authStore.currentStepName}`]">
-      <div v-if="isPhoneOrCodeSteps" class="auth-form__logo">{{ languageStore.currentLocale.logotypeText }}</div>
+      <div v-if="isPhoneOrCodeSteps" class="auth-form__logo">
+        {{ languageStore.currentLocale.logotypeText }}
+      </div>
       <EnterPhone v-if="authStore.currentStepName === 'phone'" />
       <EnterCode v-if="authStore.currentStepName === 'code'" />
       <SubscribeChannel v-if="authStore.currentStepName === 'channel'" />
@@ -33,8 +35,12 @@ const isPhoneOrCodeSteps = computed<boolean>(
           <ChangeLanguage />
         </div>
         <div class="auth-form__politics">
-          <a href="#" target="_blank">{{ languageStore.currentLocale.policy.conditions }}</a>
-          <a href="#" target="_blank">{{ languageStore.currentLocale.policy.confidentiality }}</a>
+          <a href="#" target="_blank">{{
+            languageStore.currentLocale.policy.conditions
+          }}</a>
+          <a href="#" target="_blank">{{
+            languageStore.currentLocale.policy.confidentiality
+          }}</a>
         </div>
       </div>
     </div>
