@@ -13,12 +13,12 @@ npm install
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Сборка проекта
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Lint
 ```sh
 npm run lint
 ```
