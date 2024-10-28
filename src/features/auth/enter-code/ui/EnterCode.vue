@@ -9,12 +9,16 @@ import InputOpt from '@/shared/ui/inputs/InputOpt.vue';
 import { useChannelsStore } from '@/entities/channels';
 import { computed, ref } from 'vue';
 import { helpers, required } from '@vuelidate/validators';
-import useVuelidate, { type ServerErrors } from '@vuelidate/core';
+import { useVuelidate,  type ServerErrors } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
 import axios from 'axios';
+import { useLanguagesStore } from '@/entities/languages';
+import { storeToRefs } from 'pinia';
 
 const authStore = useAuthStore();
 const channelsStore = useChannelsStore();
+const languageStore = useLanguagesStore();
+const { currentLocale } = storeToRefs(languageStore);
 
 const resendCode = async () => {
   await authStore.resendCode();
@@ -22,10 +26,10 @@ const resendCode = async () => {
 
 const rules = computed(() => ({
   channel: {
-    required: helpers.withMessage('Поле обязательно для заполнения', required)
+    required: helpers.withMessage(currentLocale.value.validationErrors.required, required)
   },
   code: {
-    required: helpers.withMessage('Поле обязательно для заполнения', required)
+    required: helpers.withMessage(currentLocale.value.validationErrors.required, required)
   }
 }));
 
@@ -59,9 +63,9 @@ const submitHandler = async () => {
 
 <template>
   <div class="auth-form__header">
-    <div class="auth-form__title">Введите код</div>
+    <div class="auth-form__title">{{ currentLocale.step1.title }}</div>
     <div class="auth-form__description">
-      Отправлен по номеру
+      {{ currentLocale.step1.description + ' ' }}
       <span v-if="authStore.mobilePhone">{{ authStore.mobilePhone }}</span>
     </div>
   </div>
@@ -88,7 +92,7 @@ const submitHandler = async () => {
               </AGSelectItem>
             </template>
           </AGSelect>
-          <label for="country">Способ получения кода</label>
+          <label for="channel">{{ currentLocale.step1.channelLabel }}</label>
         </FloatLabel>
         <InputTextError v-if="isChannelError">
           {{ $v.channel.$errors[0]?.$message }}
@@ -104,12 +108,13 @@ const submitHandler = async () => {
             @update:timer="value => (authStore.timer = value)"
             @blur="$v.code.$touch()"
             :invalid="isCodeError"
+            :send-text="currentLocale.step1.buttonSendText"
             id="code"
             name="code"
             type="number"
             fluid
           />
-          <label for="code">Введите код</label>
+          <label for="code">{{ currentLocale.step1.codeLabel }}</label>
         </FloatLabel>
         <InputTextError v-if="isCodeError">
           {{ $v.code.$errors[0]?.$message }}
@@ -117,13 +122,13 @@ const submitHandler = async () => {
       </div>
     </div>
     <div class="auth-form__actions">
-      <AGButton label="Назад" text size-icon="sm" @click="authStore.prevStep()">
+      <AGButton :label="currentLocale.step1.buttonPrevText" text size-icon="sm" @click="authStore.prevStep()">
         <template #beforeIcon>
           <IconArrow />
         </template>
       </AGButton>
       <AGButton
-        label="Продолжить"
+        :label="currentLocale.step1.buttonNextText"
         :disabled="isChannelError || isCodeError"
         @click="submitHandler"
         :loading="authStore.isCheckSessionCodeLoading"

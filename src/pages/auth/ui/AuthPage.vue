@@ -4,9 +4,11 @@ import { ChangeLanguage } from '@/features/change-language';
 import { useCountriesStore } from '@/entities/countries';
 import { EnterPhone, SubscribeChannel, EnterCode } from '@/features/auth';
 import { useAuthStore } from '@/entities/auth';
+import { useLanguagesStore } from '@/entities/languages';
 
 const countriesStore = useCountriesStore();
 const authStore = useAuthStore();
+const languageStore = useLanguagesStore();
 
 onMounted(() => {
   countriesStore.getCountries();
@@ -22,9 +24,7 @@ const isPhoneOrCodeSteps = computed<boolean>(
 <template>
   <div :class="['auth-page']">
     <div :class="['auth-form', `auth-form--${authStore.currentStepName}`]">
-      <div v-if="isPhoneOrCodeSteps" class="auth-form__logo">
-        Логотип (Высота 40px, длина до 300px)
-      </div>
+      <div v-if="isPhoneOrCodeSteps" class="auth-form__logo">{{ languageStore.currentLocale.logotypeText }}</div>
       <EnterPhone v-if="authStore.currentStepName === 'phone'" />
       <EnterCode v-if="authStore.currentStepName === 'code'" />
       <SubscribeChannel v-if="authStore.currentStepName === 'channel'" />
@@ -33,8 +33,8 @@ const isPhoneOrCodeSteps = computed<boolean>(
           <ChangeLanguage />
         </div>
         <div class="auth-form__politics">
-          <a href="#" target="_blank">Условия</a>
-          <a href="#" target="_blank">Конфиденциальность</a>
+          <a href="#" target="_blank">{{ languageStore.currentLocale.policy.conditions }}</a>
+          <a href="#" target="_blank">{{ languageStore.currentLocale.policy.confidentiality }}</a>
         </div>
       </div>
     </div>

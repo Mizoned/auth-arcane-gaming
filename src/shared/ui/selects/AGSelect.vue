@@ -15,9 +15,13 @@ interface AGSelectProps {
   fluid?: boolean;
   useSearch?: boolean;
   invalid?: boolean;
+  emptyText?: string;
+  searchPlaceholder?: string;
 }
 
-const props = defineProps<AGSelectProps>();
+const props = withDefaults(defineProps<AGSelectProps>(), {
+  emptyText: 'Ничего не найдено'
+});
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: AGSelectOption<T>): void;
@@ -82,7 +86,7 @@ const selectedOptionName = computed<string>(() => {
     </div>
     <div class="ag-select__dropdown">
       <div v-if="useSearch" class="ag-select__search">
-        <InputSearch v-model="search" placeholder="Поиск" fluid />
+        <InputSearch v-model="search" :placeholder="searchPlaceholder" fluid />
       </div>
       <div class="ag-select__dropdown-list">
         <template v-if="searchedOptions.length">
@@ -98,9 +102,7 @@ const selectedOptionName = computed<string>(() => {
             <slot name="option" :data="option" />
           </div>
         </template>
-        <div v-else class="ag-select__dropdown-list-empty">
-          Ничего не найдено
-        </div>
+        <div v-else class="ag-select__dropdown-list-empty">{{ emptyText }}</div>
       </div>
     </div>
   </div>

@@ -12,16 +12,20 @@ import { helpers, required } from '@vuelidate/validators';
 import { type ServerErrors, useVuelidate } from '@vuelidate/core';
 import InputTextError from '@/shared/ui/inputs/InputTextError.vue';
 import axios from 'axios';
+import { useLanguagesStore } from '@/entities/languages';
+import { storeToRefs } from 'pinia';
 
 const authStore = useAuthStore();
 const countriesStore = useCountriesStore();
+const languageStore = useLanguagesStore();
+const { currentLocale } = storeToRefs(languageStore);
 
 const rules = computed(() => ({
   country: {
-    required: helpers.withMessage('Поле обязательно для заполнения', required)
+    required: helpers.withMessage(currentLocale.value.validationErrors.required, required)
   },
   mobilePhone: {
-    required: helpers.withMessage('Поле обязательно для заполнения', required)
+    required: helpers.withMessage(currentLocale.value.validationErrors.required, required)
   }
 }));
 
@@ -60,8 +64,8 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
 
 <template>
   <div class="auth-form__header">
-    <div class="auth-form__title">Введите номер телефона</div>
-    <div class="auth-form__description">Чтобы войти или зарегистрироваться</div>
+    <div class="auth-form__title">{{ currentLocale.step0.title }}</div>
+    <div class="auth-form__description">{{ currentLocale.step0.description }}</div>
   </div>
   <div class="auth-form__body">
     <div class="auth-form__fields">
@@ -73,6 +77,8 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
             :options="countriesStore.countries"
             @close="$v.country.$touch()"
             :invalid="isCountryError"
+            :search-placeholder="currentLocale.step0.searchPlaceholder"
+            :empty-text="currentLocale.step0.emptySearchText"
             fluid
             useSearch
           >
@@ -87,7 +93,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
               </AGSelectItem>
             </template>
           </AGSelect>
-          <label for="country">Страна</label>
+          <label for="country">{{ currentLocale.step0.countryLabel }}</label>
         </FloatLabel>
         <InputTextError v-if="isCountryError">
           {{ $v.country.$errors[0]?.$message }}
@@ -106,7 +112,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
             name="phone"
             fluid
           />
-          <label for="phone">Номер телефона</label>
+          <label for="phone">{{ currentLocale.step0.mobilePhoneLabel }}</label>
         </FloatLabel>
         <InputTextError v-if="isMobilePhoneError">
           {{ $v.mobilePhone.$errors[0]?.$message }}
@@ -115,7 +121,7 @@ const isCountryError = computed(() => $v.value.country.$invalid && $v.value.coun
     </div>
     <div class="auth-form__actions">
       <AGButton
-        label="Продолжить"
+        :label="currentLocale.step0.buttonText"
         :disabled="isMobilePhoneError || isCountryError"
         @click="submitHandler"
         :loading="authStore.isCreateSessionLoading"

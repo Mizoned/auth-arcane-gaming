@@ -5,9 +5,12 @@ import TextTimer from '@/shared/ui/timers/TextTimer.vue';
 
 interface InputOptProps {
   timer: number;
+  sendText?: string;
 }
 
-defineProps<InputOptProps>();
+withDefaults(defineProps<InputOptProps>(), {
+  sendText: 'Отправить'
+});
 
 const emits = defineEmits<{
   (e: 'update:timer', value: number): void;
@@ -30,7 +33,7 @@ const updateTimerHandler = (value: number) => {
       <AGButton
         v-if="timer === 0"
         @click="startTimerHandler"
-        label="Отправить"
+        :label="sendText"
         size="sm"
         text
       />

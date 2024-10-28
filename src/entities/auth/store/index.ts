@@ -161,6 +161,7 @@ export const useAuthStore = defineStore('AuthStore', () => {
     isCheckSessionCodeLoading,
     isResendCodeLoading,
     isCheckSubscribeStatusLoading,
+    currentStep,
     nextStep,
     prevStep,
     setStep,

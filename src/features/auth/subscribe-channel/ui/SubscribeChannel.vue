@@ -2,8 +2,12 @@
 import IconArrow from '@/shared/ui/icons/IconArrow.vue';
 import AGButton from '@/shared/ui/buttons/AGButton.vue';
 import { useAuthStore } from '@/entities/auth';
+import { useLanguagesStore } from '@/entities/languages';
+import { storeToRefs } from 'pinia';
 
 const authStore = useAuthStore();
+const languageStore = useLanguagesStore();
+const { currentLocale } = storeToRefs(languageStore);
 
 const checkStatus = async () => {
   await authStore.checkSubscribeStatus();
@@ -38,12 +42,12 @@ const checkStatus = async () => {
   <div class="auth-form__body">
     <div class="auth-form__actions">
       <AGButton
-        label="Авторизоваться в боте"
+        :label="currentLocale.step2.buttonTextBot"
         :to="authStore.selectedChannel?.link"
         target="_blank"
       />
       <AGButton
-        label="Проверить статус"
+        :label="currentLocale.step2.buttonTextCheck"
         text
         @click="checkStatus"
         :loading="authStore.isCheckSubscribeStatusLoading"
