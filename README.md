@@ -1,14 +1,14 @@
 # Auth Arcane Gaming
 
-## Project Setup
+## Установка зависимостей
 ```sh
 npm install
 ```
 
-### Setting environment variables before starting the project
->Create a `.env` file in the project root based on the `.env.example` file
+### Установка переменных среды окружения перед запуском проекта
+>Создайте файл `.env` в корне проекта на основе файла `.env.example`.
 
-### Compile and Hot-Reload for Development
+### Запуск в режиме разработки
 ```sh
 npm run dev
 ```
